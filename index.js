@@ -18,19 +18,19 @@ function clearTasks() {
   tasks = [];
 }
 
-function scheduleWatering(times, duration) {
+function scheduleWatering(schedules) {
   clearTasks();
 
-  times.forEach((timeStr) => {
-    const [hour, minute] = timeStr.split(":");
+  schedules.forEach(({ time, duration }) => {
+    const [hour, minute] = time.split(":");
     const cronTime = `${minute} ${hour} * * *`;
 
     const task = cron.schedule(cronTime, () => {
-      console.log(`[${timeStr}] Start watering`);
+      console.log(`[${time}] Start watering`);
       client.publish(MQTT_TOPIC, "startwatering");
 
       setTimeout(() => {
-        console.log(`[${timeStr}] Stop watering after ${duration}s`);
+        console.log(`[${time}] Stop watering after ${duration}s`);
         client.publish(MQTT_TOPIC, "stopwatering");
       }, duration * 1000);
     });
@@ -40,37 +40,24 @@ function scheduleWatering(times, duration) {
 }
 
 app.post("/schedule", (req, res) => {
-  console.log("Body received:", req.body);
-  const { times, duration } = req.body;
+  const schedules = req.body;
 
-  if (!Array.isArray(times) || typeof duration !== "number") {
-    return res.status(400).json({ error: "Invalid input format" });
+  if (!Array.isArray(schedules)) {
+    return res.status(400).json({ error: "Expected array of schedules" });
   }
 
-  scheduleWatering(times, duration);
-  res.json({ message: "Watering schedule updated", times, duration });
-});
-
-app.listen(process.env.PORT || 3000, () => {
-  console.log("Server running");
-});
-
-// Endpoint manual watering dari Flutter
-app.post("/water-now", (req, res) => {
-  const { duration } = req.body;
-  if (typeof duration !== "number") {
-    return res.status(400).json({ error: "Invalid duration" });
+  for (const item of schedules) {
+    if (
+      typeof item.time !== "string" ||
+      !item.time.match(/^\d{2}:\d{2}$/) ||
+      typeof item.duration !== "number"
+    ) {
+      return res.status(400).json({ error: "Invalid schedule item format" });
+    }
   }
 
-  client.publish(MQTT_TOPIC, "start");
-  console.log(`[Manual] Start watering`);
-
-  setTimeout(() => {
-    client.publish(MQTT_TOPIC, "stop");
-    console.log(`[Manual] Stop watering after ${duration}s`);
-  }, duration * 1000);
-
-  res.json({ message: "Manual watering started", duration });
+  scheduleWatering(schedules);
+  res.json({ message: "Watering schedule updated", schedules });
 });
 
 const PORT = process.env.PORT || 3000;

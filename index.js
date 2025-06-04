@@ -6,19 +6,18 @@ const mqtt = require("mqtt");
 const app = express();
 app.use(bodyParser.json());
 
-const MQTT_BROKER = "mqtt://broker.emqx.io"; // ganti kalau kamu pakai broker sendiri
+const MQTT_BROKER = "mqtt://broker.emqx.io";
 const MQTT_TOPIC = "sensor/data";
 
 const client = mqtt.connect(MQTT_BROKER);
 
-let tasks = []; // simpan semua cron tasks aktif
+let tasks = [];
 
 function clearTasks() {
   tasks.forEach((task) => task.stop());
   tasks = [];
 }
 
-// Fungsi untuk buat jadwal nyiram + auto stop setelah durasi
 function scheduleWatering(times, duration) {
   clearTasks();
 
@@ -40,8 +39,8 @@ function scheduleWatering(times, duration) {
   });
 }
 
-// Endpoint untuk kirim jadwal + durasi dari Flutter
 app.post("/schedule", (req, res) => {
+  console.log("Body received:", req.body);
   const { times, duration } = req.body;
 
   if (!Array.isArray(times) || typeof duration !== "number") {
@@ -50,6 +49,10 @@ app.post("/schedule", (req, res) => {
 
   scheduleWatering(times, duration);
   res.json({ message: "Watering schedule updated", times, duration });
+});
+
+app.listen(process.env.PORT || 3000, () => {
+  console.log("Server running");
 });
 
 // Endpoint manual watering dari Flutter

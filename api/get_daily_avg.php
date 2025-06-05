@@ -18,22 +18,17 @@ try {
     exit;
 }
 
-// Ambil parameter tanggal dari query string
-$date = $_GET['date'] ?? date('Y-m-d');
+// Ambil 7 data terakhir berdasarkan tanggal DESC, lalu dibalik urutannya (ASC)
+$stmt = $pdo->query("
+    SELECT * FROM (
+        SELECT * FROM sensor_daily_avg
+        ORDER BY date DESC
+        LIMIT 7
+    ) AS sub
+    ORDER BY date ASC
+");
 
-// Ambil data dari tabel sensor_daily_avg
-$stmt = $pdo->prepare("SELECT * FROM sensor_daily_avg WHERE date = :date LIMIT 1");
-$stmt->execute(['date' => $date]);
-$data = $stmt->fetch(PDO::FETCH_ASSOC);
+$data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-if ($data) {
-    echo json_encode($data);
-} else {
-    echo json_encode([
-        'date' => $date,
-        'avg_tds' => null,
-        'avg_kelembaban' => null,
-        'avg_suhu' => null,
-        'avg_ph' => null
-    ]);
-}
+// Kembalikan data sebagai JSON
+echo json_encode($data);

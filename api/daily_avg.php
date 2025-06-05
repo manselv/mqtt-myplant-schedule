@@ -59,4 +59,11 @@ $stmt->execute([
     'avg_ph' => $avg['avg_ph'],
 ]);
 
+// hapus data hourly untuk tanggal yang sudah diaggregate
+$stmt = $pdo->prepare("DELETE FROM sensor_hourly_avg WHERE hour BETWEEN :start AND :end");
+$stmt->execute([
+    'start' => $yesterday . ' 00:00:00',
+    'end'   => $yesterday . ' 23:59:59'
+]);
+
 echo "Agregasi harian untuk $yesterday selesai.\n";

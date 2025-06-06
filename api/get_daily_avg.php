@@ -23,7 +23,7 @@ $stmt = $pdo->query("
     SELECT * FROM (
         SELECT * FROM sensor_daily_avg
         ORDER BY date DESC
-        LIMIT 7
+        LIMIT 6
     ) AS sub
     ORDER BY date ASC
 ");

@@ -2,12 +2,12 @@
 // koneksi PDO sama seperti sebelumnya...
 // Koneksi ke database
 $host = 'localhost';
-$db   = 'sibe5579_myplant';
+$db = 'sibe5579_myplant';
 $user = 'sibe5579_cbux';
 $pass = '1NvgEHFnwvDN96';
 
 $dsn = "mysql:host=$host;dbname=$db;charset=utf8mb4";
-$options = [ PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION ];
+$options = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION];
 
 try {
     $pdo = new PDO($dsn, $user, $pass, $options);
@@ -37,7 +37,7 @@ $stmt = $pdo->prepare("
 ");
 $stmt->execute([
     'start' => $yesterday . ' 00:00:00',
-    'end'   => $yesterday . ' 23:59:59'
+    'end' => $yesterday . ' 23:59:59'
 ]);
 $avg = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -63,7 +63,13 @@ $stmt->execute([
 $stmt = $pdo->prepare("DELETE FROM sensor_hourly_avg WHERE hour BETWEEN :start AND :end");
 $stmt->execute([
     'start' => $yesterday . ' 00:00:00',
-    'end'   => $yesterday . ' 23:59:59'
+    'end' => $yesterday . ' 23:59:59'
+]);
+// Hapus data per detik
+$stmt = $pdo->prepare("DELETE FROM sensor_data WHERE timestamp BETWEEN :start AND :end");
+$stmt->execute([
+    'start' => $yesterday . ' 00:00:00',
+    'end' => $yesterday . ' 23:59:59'
 ]);
 
 echo "Agregasi harian untuk $yesterday selesai.\n";

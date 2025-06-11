@@ -61,7 +61,7 @@ $stmt->execute([
 ]);
 
 // Hapus data per detik untuk jam itu (optional)
-$stmt = $pdo->prepare("DELETE FROM sensor_data WHERE timestamp BETWEEN :start AND :end");
-$stmt->execute(['start' => $lastHour, 'end' => $nextHour]);
+// $stmt = $pdo->prepare("DELETE FROM sensor_data WHERE timestamp BETWEEN :start AND :end");
+// $stmt->execute(['start' => $lastHour, 'end' => $nextHour]);
 
 echo "Agregasi untuk jam $lastHour selesai.\n";

@@ -65,7 +65,14 @@ app.post("/schedule", (req, res) => {
   res.json({ message: "Watering schedule updated", schedules });
 });
 
-const PORT = process.env.PORT || 3000;
+// const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
+
+if (!PORT) {
+  throw new Error(
+    "❌ process.env.PORT tidak terdeteksi. Railway butuh PORT dari environment."
+  );
+}
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

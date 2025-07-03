@@ -61,6 +61,7 @@ app.post("/schedule", (req, res) => {
   }
 
   scheduleWatering(schedules);
+  console.log("Watering schedules updated:", schedules);
   res.json({ message: "Watering schedule updated", schedules });
 });
 

@@ -7,10 +7,24 @@ const app = express();
 app.use(bodyParser.json());
 
 // const MQTT_BROKER = "mqtt://broker.emqx.io";
-const MQTT_BROKER = "wss://mqtt.myplant.site:443/mqtt";
 const MQTT_TOPIC = "sensor/data";
 
-const client = mqtt.connect(MQTT_BROKER);
+const client = mqtt.connect({
+  protocol: "wss",
+  host: "mqtt.myplant.site",
+  port: 443,
+  path: "/mqtt",
+  reconnectPeriod: 1000, // optional: reconnect kalau gagal
+});
+
+// MQTT Event Handler
+client.on("connect", () => {
+  console.log("✅ MQTT connected");
+});
+
+client.on("error", (err) => {
+  console.error("❌ MQTT connection error:", err.message);
+});
 
 let tasks = [];
 

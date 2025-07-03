@@ -6,8 +6,9 @@ const mqtt = require("mqtt");
 const app = express();
 app.use(bodyParser.json());
 
-const MQTT_BROKER = "mqtt://broker.emqx.io";
-const MQTT_TOPIC = "myplant/data";
+// const MQTT_BROKER = "mqtt://broker.emqx.io";
+const MQTT_BROKER = "wss://mqtt.myplant.site:443/mqtt";
+const MQTT_TOPIC = "sensor/data";
 
 const client = mqtt.connect(MQTT_BROKER);
 

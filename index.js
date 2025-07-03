@@ -66,12 +66,6 @@ app.post("/schedule", (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-
-if (!PORT) {
-  throw new Error(
-    "❌ process.env.PORT tidak terdeteksi. Railway butuh PORT dari environment."
-  );
-}
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cron = require("node-cron");
 const mqtt = require("mqtt");
+const axios = require("axios");
 
 const app = express();
 app.use(bodyParser.json());
@@ -32,6 +33,19 @@ function scheduleWatering(schedules) {
     const task = cron.schedule(cronTime, () => {
       console.log(`[${time}] Start watering`);
       client.publish(MQTT_TOPIC, "startwatering");
+
+      // Kirim data ke PHP setelah start
+      axios.post("https://sibeux.my.id/project/myplant-php-jwt/api/water_history", {
+        time: new Date().toISOString(),
+        duration: duration,
+        type: "terjadwal"
+      })
+      .then((res) => {
+        console.log("History sent:", res.data);
+      })
+      .catch((err) => {
+        console.error("Error sending history:", err.message);
+      });
 
       setTimeout(() => {
         console.log(`[${time}] Stop watering after ${duration}s`);

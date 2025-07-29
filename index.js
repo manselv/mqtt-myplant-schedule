@@ -36,6 +36,7 @@ function scheduleWatering(schedules) {
 
       // Kirim data ke PHP setelah start.
       axios.post("https://sibeux.my.id/project/myplant-php-jwt/api/water_history", {
+        method: "set_water_history",
         time: new Date().toISOString(),
         duration: duration,
         type: "terjadwal"

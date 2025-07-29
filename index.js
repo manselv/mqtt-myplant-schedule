@@ -34,7 +34,7 @@ function scheduleWatering(schedules) {
       console.log(`[${time}] Start watering`);
       client.publish(MQTT_TOPIC, "startwatering");
 
-      // Kirim data ke PHP setelah start
+      // Kirim data ke PHP setelah start.
       axios.post("https://sibeux.my.id/project/myplant-php-jwt/api/water_history", {
         time: new Date().toISOString(),
         duration: duration,

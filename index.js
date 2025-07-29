@@ -35,9 +35,10 @@ function scheduleWatering(schedules) {
       client.publish(MQTT_TOPIC, "startwatering");
 
       // Kirim data ke PHP setelah start.
+      const wibTime = new Date(Date.now() + 7 * 60 * 60 * 1000).toISOString();
       axios.post("https://sibeux.my.id/project/myplant-php-jwt/api/water_history", {
         method: "set_water_history",
-        time: new Date().toISOString(),
+        time: wibTime,
         duration: duration,
         type: "terjadwal"
       })
